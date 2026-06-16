@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Premium Widget",
+    "slug": "premium-widget",
+    "tagline": "The simplest way to get things done. Beautiful, durable, built to last.",
+    "price": "$49",
+    "ctaText": "Buy Now",
+    "trustMarker": "Free shipping • 30-day returns",
+    "images": [
+      "photo-1.jpg",
+      "photo-2.jpg",
+      "photo-3.jpg"
+    ],
+    "tallyFormUrl": "https://tally.so/embed/abc123",
+    "pageTitle": "Premium Widget — Buy Now",
+    "pageDescription": "Premium Widget is the simplest way to get things done."
+  },
+  {
+    "name": "Super Gadget",
+    "slug": "super-gadget",
+    "tagline": "One device. Endless possibilities.",
+    "price": "$79",
+    "ctaText": "Order Now",
+    "trustMarker": "Free shipping • 60-day guarantee",
+    "images": [
+      "gadget-1.jpg",
+      "gadget-2.jpg",
+      "gadget-3.jpg",
+      "gadget-4.jpg"
+    ],
+    "tallyFormUrl": "https://tally.so/embed/def456",
+    "pageTitle": "Super Gadget — Order Now",
+    "pageDescription": "One device. Endless possibilities. Super Gadget is your everyday companion."
+  }
+]
