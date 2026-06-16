@@ -1,19 +1,25 @@
 [
   {
-    "name": "Premium Widget",
-    "slug": "premium-widget",
-    "tagline": "The simplest way to get things done. Beautiful, durable, built to last.",
-    "price": "$49",
-    "ctaText": "Buy Now",
-    "trustMarker": "Free shipping • 30-day returns",
+    "name": "table en bois pliante",
+    "slug": "table en bois pliante",
+    "tagline": "✔ 60cm×40cm×110cm
+✔️ ارتفاع قابل للتعديل: من 63 سم إلى 90 سم لتناسب جميع الاستخدامات وتوفر الراحة
+✔️ سهولة الحركة: عجلات متينة تسهّل نقلها إلى أي مكان في المنزل .
+.",
+    "price": "4900DA",
+    "ctaText": "تقديم طلب",
+    "trustMarker": "توصيل سريع 58 ولاية",
     "images": [
       "photo-1.jpg",
       "photo-2.jpg",
       "photo-3.jpg"
     ],
-    "tallyFormUrl": "https://tally.so/embed/abc123",
-    "pageTitle": "Premium Widget — Buy Now",
-    "pageDescription": "Premium Widget is the simplest way to get things done."
+    "tallyFormUrl": "https://tally.so/embed/NpObvG",
+    "pageTitle": "MKW STORE — تقديم طلب",
+    "pageDescription": "
+✔️ ارتفاع قابل للتعديل: من 63 سم إلى 90 سم لتناسب جميع الاستخدامات وتوفر الراحة
+✔️ سهولة الحركة: عجلات متينة تسهّل نقلها إلى أي مكان في المنزل .
+."."
   },
   {
     "name": "Super Gadget",
