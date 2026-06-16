@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  
+  <title>{{PAGE_TITLE}}</title>
+  <meta name="description" content="{{PAGE_DESCRIPTION}}">
+
+  <meta property="og:title" content="{{PAGE_TITLE}}">
+  <meta property="og:description" content="{{PAGE_DESCRIPTION}}">
+  <meta property="og:image" content="{{OG_IMAGE}}">
+  <meta property="og:type" content="product">
+
+  <meta name="robots" content="noindex, nofollow">
+
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html { height: 100%; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                   'Helvetica Neue', Arial, sans-serif;
+      background: #ffffff;
+      color: #1a1a1a;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .gallery {
+      flex: 0 0 auto;
+      height: clamp(200px, 35vh, 320px);
+      position: relative;
+      background: #f0f0f0;
+      overflow: hidden;
+    }
+
+    .gallery-strip {
+      display: flex;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      height: 100%;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .gallery-strip::-webkit-scrollbar { display: none; }
+
+    .gallery-slide {
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+      height: 100%;
+    }
+
+    .gallery-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      background: #e0e0e0;
+    }
+
+    .gallery-slide img.loaded { opacity: 1; }
+
+    .gallery-slide img:not(.loaded) {
+      animation: shimmer 1.5s infinite;
+      background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+      background-size: 200% 100%;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .gallery-dots {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    .gallery-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .gallery-dot.active {
+      background: #ffffff;
+      transform: scale(1.3);
+    }
+
+    .content {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: clamp(14px, 3vw, 24px) clamp(16px, 5vw, 32px);
+    }
+
+    .product-name {
+      font-size: clamp(1.4rem, 4.5vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: clamp(4px, 0.8vw, 8px);
+      overflow-wrap: break-word;
+      word-break: break-word;
+      max-width: 100%;
+    }
+
+    .tagline {
+      font-size: clamp(0.85rem, 2.6vw, 1.05rem);
+      color: #555;
+      line-height: 1.4;
+      margin-bottom: clamp(10px, 2vw, 16px);
+      max-width: 320px;
+      overflow-wrap: break-word;
+    }
+
+    .price {
+      font-size: clamp(1.6rem, 5.5vw, 2.6rem);
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: clamp(14px, 3vw, 22px);
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: #1a1a1a;
+      color: #ffffff;
+      font-size: clamp(1rem, 3vw, 1.15rem);
+      font-weight: 600;
+      padding: clamp(14px, 2.5vw, 18px) clamp(32px, 8vw, 56px);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      min-height: 44px;
+      min-width: 44px;
+      width: 100%;
+      max-width: 340px;
+      transition: background 0.15s ease, transform 0.1s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .cta-button:hover { background: #333; }
+    .cta-button:active { transform: scale(0.97); }
+
+    .trust-marker {
+      font-size: clamp(0.68rem, 1.8vw, 0.8rem);
+      color: #888;
+      margin-top: clamp(8px, 2vw, 14px);
+      max-width: 320px;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal {
+      background: #ffffff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 500px;
+      height: 85vh;
+      height: 85dvh;
+      max-height: 620px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(20px);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-overlay.active .modal { transform: translateY(0); }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid #eee;
+      flex: 0 0 auto;
+    }
+
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: #777;
+      line-height: 1;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .modal-close:hover { background: #f0f0f0; }
+
+    .modal-body {
+      flex: 1 1 auto;
+      position: relative;
+    }
+
+    .modal-body iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .modal-fallback {
+      display: none;
+      padding: 24px;
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .modal-fallback a {
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="gallery" id="gallery">
+    <div class="gallery-strip" id="galleryStrip">
+      {{GALLERY_SLIDES}}
+    </div>
+    <div class="gallery-dots" id="galleryDots">
+      {{GALLERY_DOTS}}
+    </div>
+  </div>
+
+  <div class="content">
+    <h1 class="product-name">{{PRODUCT_NAME}}</h1>
+    <p class="tagline">{{TAGLINE}}</p>
+    <p class="price">{{PRICE}}</p>
+    <button class="cta-button" id="ctaButton">{{CTA_TEXT}}</button>
+    <p class="trust-marker">{{TRUST_MARKER}}</p>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Order — {{PRODUCT_NAME}}</span>
+        <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        {{TALLY_IFRAME}}
+        <div class="modal-fallback" id="modalFallback">
+          The form didn't load.
+          <a href="{{TALLY_DIRECT_LINK}}" target="_blank" rel="noopener">Open it directly &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var TALLY_FORM_URL = "{{TALLY_FORM_URL}}";
+
+    (function() {
+      var strip = document.getElementById('galleryStrip');
+      var slides = document.querySelectorAll('.gallery-slide');
+      var dots = document.querySelectorAll('.gallery-dot');
+
+      if (slides.length > 1) {
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              var index = Array.from(slides).indexOf(entry.target);
+              dots.forEach(function(d, i) { d.classList.toggle('active', i === index); });
+            }
+          });
+        }, { root: strip, threshold: 0.6 });
+        slides.forEach(function(slide) { observer.observe(slide); });
+      }
+
+      document.querySelectorAll('.gallery-slide img').forEach(function(img) {
+        if (img.complete) { img.classList.add('loaded'); }
+        else { img.addEventListener('load', function() { img.classList.add('loaded'); }); }
+        img.addEventListener('error', function() { img.classList.add('loaded'); });
+      });
+    })();
+
+    (function() {
+      var overlay = document.getElementById('modalOverlay');
+      var closeBtn = document.getElementById('modalClose');
+      var cta = document.getElementById('ctaButton');
+      var fallback = document.getElementById('modalFallback');
+      var body = document.getElementById('modalBody');
+
+      function openModal() {
+        if (!body.querySelector('iframe') && TALLY_FORM_URL && TALLY_FORM_URL.indexOf('placeholder') === -1) {
+          var iframe = document.createElement('iframe');
+          iframe.src = TALLY_FORM_URL;
+          iframe.allow = 'fullscreen';
+          iframe.title = 'Order Form';
+          var timer = setTimeout(function() {
+            if (iframe.parentNode) { iframe.style.display = 'none'; fallback.style.display = 'block'; }
+          }, 5000);
+          iframe.onload = function() { clearTimeout(timer); };
+          body.insertBefore(iframe, fallback);
+        }
+        if (!TALLY_FORM_URL || TALLY_FORM_URL.indexOf('placeholder') !== -1) {
+          fallback.style.display = 'block';
+        }
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      cta.addEventListener('click', openModal);
+      closeBtn.addEventListener('click', closeModal);
+      overlay.addEventListener('click', function(e) { if (e.target === overlay) closeModal(); });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
+      });
+    })();
+  </script>
+</body>
+</html>
